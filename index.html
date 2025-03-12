@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freshers' Memory</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-text">
+            <h1>Freshers Memory</h1>
+            <p>Relive Your First Moments In Freshers</p>
+        </div>
+    </section>
+
+    <!-- Card Slider -->
+    <section class="card-slider">
+        <div class="cards-container">
+            <!-- Repeat cards twice for seamless looping -->
+            <div class="card"><img src="assets/photos/report/1.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/2.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/3.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/4.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/5.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/6.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/7.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/8.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/9.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/10.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/11.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/12.png" onclick="openModal(this)"></div>
+            <div class="card"><img src="assets/photos/report/13.png" onclick="openModal(this)"></div>
+        </div>
+    </section>
+
+    <!-- Event Description Section -->
+    <section class="event-description" id="about">
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h2>Our Freshers' Journey</h2><br>
+                <p>Welcome to the most memorable experience of your college life! Our annual Freshers' Party is a tradition that marks the beginning of new friendships, exciting opportunities, and unforgettable memories. <br><br> This year's event was no exception, featuring an array of amazing performances that captivated the audience with their energy and talent. From mesmerizing dance routines to soulful musical acts, every moment was a testament to the creativity and passion of our students. <br><br>
+
+                    The party also included a variety of interactive games and activities designed to break the ice and foster camaraderie among the freshers. These engaging sessions not only provided endless laughter and entertainment but also helped in building strong bonds between the newcomers and their seniors. <br><br> Moreover, the event offered invaluable opportunities for freshers to connect with seniors and faculty members, providing a platform for mentorship and guidance throughout their college journey.</p><br
+                <p>This year's event featured amazing performances, interactive games, and opportunities to connect with seniors and faculty members.</p>
+            </div>
+            <div class="gif-container">
+                <img src="assets/photos/report/1.png" alt="Event Highlights">
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="expandedImage" style="width:100%">
+        </div>
+    </div>
+</body>
+</html>

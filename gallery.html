@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freshers Gallery</title>
+    <style>
+        :root {
+            --primary-dark: #1a1a1a;
+            --accent-red: #ff4757;
+            --secondary-dark: #2d2d2d;
+            --text-light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+        }
+
+        /* Navigation Styles */
+        nav {
+            background: #2c3e50;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 101;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 2rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        /* Gallery Controls */
+        .gallery-controls {
+            padding: 5rem 2rem 2rem 2rem;
+            text-align: center;
+            background: var(--secondary-dark);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 2px solid var(--accent-red);
+            color: var(--text-light);
+            padding: 0.8rem 2rem;
+            margin: 0 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--accent-red);
+            transform: translateY(-2px);
+        }
+
+        /* Masonry Grid Layout */
+        .gallery-container {
+            padding: 2rem 5%;
+            column-count: 4;
+            column-gap: 1rem;
+        }
+
+        .gallery-item {
+            display: inline-block;
+            margin-bottom: 1rem;
+            break-inside: avoid;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            background: var(--secondary-dark);
+            border: 2px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 13px 13px 0 0;
+        }
+
+        .media-info {
+            padding: 1rem;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .media-info {
+            opacity: 1;
+        }
+
+        /* Footer */
+        .gallery-footer {
+            background: var(--secondary-dark);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .thankyou-message {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--accent-red), #ff6b81);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .gallery-container {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .gallery-container {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .gallery-container {
+                column-count: 1;
+            }
+
+            .filter-btn {
+                margin: 0.5rem;
+                width: 80%;
+                padding: 0.5rem 0rem;
+            }
+
+            .gallery-controls {
+                display: flex;
+                padding: 11vh 2vh 0vh 2vh;
+                justify-content: center;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 0px 1rem;
+            }
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--accent-red);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            z-index: 1001;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <!-- Gallery Controls -->
+    <div class="gallery-controls">
+        <button class="filter-btn active" onclick="filterMedia('all')">All</button>
+        <button class="filter-btn" onclick="filterMedia('photo')">Photos</button>
+        <button class="filter-btn" onclick="filterMedia('video')">Videos</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container">
+        <!-- Photos -->
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (1).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (2).jpg" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (3).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (4).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (5).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (6).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (7).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (8).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (9).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (10).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (11).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (12).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (13).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (14).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (15).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (16).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (17).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (18).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (19).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (20).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (21).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (22).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (23).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (24).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (25).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (26).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (27).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (28).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (29).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (30).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (31).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (32).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (33).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (34).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (35).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (36).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (37).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (38).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (39).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (40).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (41).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (42).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (43).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (44).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (45).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (46).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (47).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (48).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (49).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (50).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (51).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (52).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (53).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (54).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (55).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (56).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (57).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (58).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (59).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (60).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (61).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (62).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (63).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (64).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (65).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (66).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (67).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (68).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (69).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (70).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (71).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (72).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (73).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (74).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (75).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (76).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (77).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (78).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (79).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (80).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (81).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (82).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (83).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (84).JPG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (85).JPEG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (86).JPEG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <div class="gallery-item" data-type="photo">
+            <img src="assets/photos/1 (87).JPEG" alt="Freshers Photo" onclick="openLightbox(this)">
+        </div>
+        <!-- <div class="gallery-item" data-type="photo">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/039/545/117/small/ai-generated-beautiful-rose-flowers-with-butterflies-flying-on-them-video.jpg"
+                alt="Freshers Photo" onclick="openLightbox(this)">
+            <div class="media-info">
+                <h3>Welcome Party</h3>
+                <p>2023 Freshers Celebration</p>
+            </div>
+        </div> -->
+
+        <!-- Videos -->
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (1).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (2).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (3).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (4).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (5).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (6).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (7).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (8).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (9).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (10).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (11).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (12).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (13).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (14).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (15).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (16).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (17).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (18).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (19).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (20).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (21).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (22).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (23).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (24).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (25).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (26).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (27).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (28).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (29).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (30).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (31).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (32).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (33).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (34).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (35).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (36).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (37).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (38).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (39).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (40).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (41).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (42).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (43).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (44).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (45).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (46).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (47).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (48).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (49).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (50).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (51).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (52).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (53).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (54).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (55).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <video controls onclick="openLightbox(this)">
+                <source src="assets/videos/1 (56).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <iframe src="https://drive.google.com/file/d/1Y1I3wdhHxzhalDn-cCxigUu5C8U7X7H7/preview" 
+           ></iframe>
+        </div>
+        <div class="gallery-item" data-type="video">
+            <iframe src="https://drive.google.com/file/d/1Y1I3wdhHxzhalDn-cCxigUu5C8U7X7H7/preview" 
+             ></iframe>
+        </div>
+        <!-- <div class="gallery-item" data-type="video">
+            <video controls poster="video-thumb1.jpg" onclick="openLightbox(this)">
+                <source src="assets/videos/3651-preview.mp4" type="video/mp4">
+            </video>
+            <div class="media-info">
+                <h3>Dance Performance</h3>
+                <p>Best group dance 2023</p>
+            </div>
+        </div> -->
+        <!-- Add more items following the same pattern -->
+        <!-- Remember to add data-type="photo" or data-type="video" -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="gallery-footer">
+        <div class="thankyou-message">We Never Forget These Memories!</div>
+        <p>© 2024-28 Freshers' Gallery | Created With ❤️ By Vansh Kesharwani</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-btn" onclick="closeLightbox()">&times;</span>
+        <div class="lightbox-content" id="lightbox-content"></div>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+
+    <script>
+        // Filter Media
+        function filterMedia(type) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.style.display = (type === 'all' || item.dataset.type === type) ?
+                    'inline-block' : 'none';
+            });
+        }
+
+        // Lightbox
+        function openLightbox(element) {
+            document.getElementById('loader').style.display = 'block';
+            const lightboxContent = document.getElementById('lightbox-content');
+
+            let mediaElement;
+            if (element.tagName === 'IMG') {
+                mediaElement = document.createElement('img');
+                mediaElement.src = element.src;
+                mediaElement.alt = element.alt;
+            } else if (element.tagName === 'VIDEO') {
+                mediaElement = document.createElement('video');
+                mediaElement.controls = true;
+                const source = document.createElement('source');
+                source.src = element.querySelector('source').src;
+                source.type = 'video/mp4';
+                mediaElement.appendChild(source);
+            }
+
+            mediaElement.style.maxWidth = '90%'; // Reduced max width to create edge space
+            mediaElement.style.maxHeight = '90vh'; // Reduced max height to create edge space
+            mediaElement.style.borderRadius = '15px';
+            mediaElement.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.3)';
+            mediaElement.style.margin = 'auto'; // Center in the lightbox
+            mediaElement.style.display = 'block'; // Ensure it respects margin
+
+            lightboxContent.innerHTML = '';
+            lightboxContent.appendChild(mediaElement);
+
+            document.getElementById('lightbox').style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        // Close lightbox on outside click
+        window.onclick = function (event) {
+            if (event.target === document.getElementById('lightbox')) {
+                closeLightbox();
+            }
+        }
+    </script>
+</body>
+
+</html>

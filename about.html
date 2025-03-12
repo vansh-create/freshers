@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Freshers Memory</title>
+    <style>
+        /* Variables */
+        :root {
+            --primary-dark: #1a1a1a;
+            --accent-red: #ff4757;
+            --secondary-dark: #2d2d2d;
+            --text-light: #ffffff;
+        }
+
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles (Same as Previous) */
+        nav {
+            background: #2c3e50;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin: 0 2rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-red);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .profile-card {
+            background: var(--secondary-dark);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-image {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .profile-image img {
+            width: 100%;
+            border-radius: 10px;
+            filter: grayscale(20%);
+            transition: filter 0.3s;
+        }
+
+        .profile-image:hover img {
+            filter: none;
+        }
+
+        .profile-info {
+            flex: 2;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .profile-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: writeText 1s forwards;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--accent-red);
+            width: 0;
+        }
+
+        .profile-info h4 {
+            font-size: 1.2rem;
+            color: var(--accent-red);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s 0.5s forwards;
+            opacity: 0;
+        }
+
+        .profile-info p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s 0.7s forwards;
+            opacity: 0;
+        }
+
+        /* Animated Graphics */
+        .circle {
+            position: absolute;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            opacity: 0.7;
+        }
+
+        .circle:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .circle:nth-child(2) {
+            width: 40px;
+            height: 40px;
+            bottom: 15%;
+            right: 10%;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--secondary-dark);
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Animations */
+        @keyframes writeText {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .about-section {
+                padding: 3rem 1rem;
+            }
+
+            .profile-card {
+                flex-direction: column;
+                max-width: 90%;
+            }
+
+            .profile-image {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                padding: 1rem;
+                text-align: center;
+            }
+
+            .profile-info h2 {
+                font-size: 2rem;
+            }
+
+            nav ul li {
+                margin: 0 1rem;
+            }
+
+            nav ul li a {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .about-section {
+                padding: 2rem 0.5rem;
+            }
+
+            .profile-card {
+                padding: 0;
+            }
+
+            .profile-image {
+                padding: 0.5rem;
+                margin: 10vw 9vw 0vw 9vw;
+                width: 80%;
+            }
+
+            .profile-info {
+                padding: 0.5rem;
+            }
+
+            .profile-info h2 {
+                font-size: 1.8rem;
+            }
+
+            .profile-info p {
+                font-size: 1rem;
+            }
+
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+
+            nav ul li a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="profile-card">
+            <div class="profile-image">
+                <img src="assets/photos/about.png" alt="Profile Image">
+            </div>
+            <div class="profile-info">
+                <h2>Vansh kesharwani</h2>
+                <h4>Upcoming Web Developer</h4>
+                <p>"Vansh Kesharwani, a dedicated student at BBAU Satellite Center Amethi, is currently pursuing his passion for technology in the BCA Hons program, 2nd semester. With a keen interest in software development and a drive to excel, Vansh is enthusiastic about contributing innovative solutions to the digital world."</p>
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p> 2025 Freshers Memory</p>
+    </footer>
+</body>
+
+</html>

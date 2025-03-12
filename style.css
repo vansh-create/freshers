@@ -1,0 +1,268 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Navigation Styles */
+nav {
+    background: #2c3e50;
+    padding: 1rem;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+
+nav ul li {
+    margin: 0 2rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    animation: slideBackground 20s infinite;
+}
+
+.hero-text {
+    color: white;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+.hero-text h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+/* Card Slider */
+.card-slider {
+    background: #ecf0f1;
+    padding: 3rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.cards-container {
+    display: flex;
+    animation: slide 40s linear infinite;
+}
+
+.card {
+    min-width: 300px;
+    height: 400px;
+    margin: 0 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+    cursor: pointer;
+    border: 3px solid #fff;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Event Description Section */
+.event-description {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: #fff;
+}
+
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.text-content {
+    flex: 1;
+    text-align: left;
+}
+
+.gif-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.gif-container img {
+    max-width: 400px;
+    border-radius: 10px;
+}
+
+/* Image Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.modal-content {
+    width: 80%;
+    max-width: 800px;
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+/* Animations */
+@keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@keyframes slideBackground {
+    0% { background-image: url('assets/photos/1\ \(51\).JPG'); }
+    20% { background-image: url('assets/photos/1\ \(71\).JPG'); }
+    40% { background-image: url('assets/photos/1\ \(86\).JPEG'); }
+    60% { background-image: url('assets/photos/1\ \(52\).JPG'); }
+    80% { background-image: url('assets/photos/1\ \(87\).JPEG'); }
+    100% { background-image: url('assets/photos/1\ \(85\).JPEG'); }
+}
+
+/* Mobile Devices */
+@media only screen and (max-width: 768px) {
+    nav ul {
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 0.5rem;
+    }
+
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+
+    .card-slider {
+        padding: 1rem 0;
+    }
+
+    .card {
+        min-width: 215px;
+        height: 300px;
+    }
+
+
+    .event-description {
+        padding: 2rem 1rem;
+    }
+
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .text-content {
+        text-align: center;
+    }
+
+    .gif-container img {
+        max-width: 200px;
+    }
+}
+
+/* Tablet Devices */
+@media only screen and (min-width: 769px) and (max-width: 992px) {
+    .hero-text h1 {
+        font-size: 3rem;
+    }
+
+    .card-slider {
+        padding: 2rem 0;
+    }
+
+    .card {
+        min-width: 200px;
+        height: 300px;
+        margin: 0.5rem;
+    }
+
+    .event-description {
+        padding: 3rem 1rem;
+    }
+
+    .content-wrapper {
+        gap: 1rem;
+    }
+
+    .gif-container img {
+        max-width: 300px;
+    }
+}
+
+/* Landscape Mobile Devices */
+@media only screen and (max-width: 768px) and (orientation: landscape) {
+    .hero-text h1 {
+        font-size: 3rem;
+    }
+
+    .card-slider {
+        padding: 1.5rem 0;
+    }
+
+    .card {
+        height: 250px;
+    }
+
+    .event-description {
+        padding: 2.5rem 1rem;
+    }
+
+    nav ul li {
+        margin: 0 0.5rem;
+    }
+
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+}
